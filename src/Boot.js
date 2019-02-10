@@ -1,7 +1,7 @@
 // Import Phaser package
 import Phaser from 'phaser';
+import { Player } from './Player';
 import { GlobalSettings } from './ShooterGame';
-
 class Boot extends Phaser.Scene {
   preload() {
     this.load.crossOrigin = 'anonymous';
@@ -15,18 +15,16 @@ class Boot extends Phaser.Scene {
   }
 
   create() {
-    // Add Background
-
-    // Set up physics
+    // Set up physics basics
     this.physics.world.setBounds(0, 0, GlobalSettings.width, GlobalSettings.height);
 
+    // Add Background
     this.bg = this.add.tileSprite(0, 0, 1200, 800, 'sea');
+
     // Add Player
-    this.player = this.physics.add.sprite(300, 350, 'player1', 0);
+    this.player = new Player(this);
 
-    this.player.setCollideWorldBounds(true);
-
-    // Enable keyboard input for this scene
+    // Enable keyboard input for the player
     // Enable arrow, shift and space keys
     this.keys = this.input.keyboard.createCursorKeys();
     // Enable custom keys (WASD, etc)
@@ -38,35 +36,13 @@ class Boot extends Phaser.Scene {
 
   // Is called 60 times per second
   update() {
-    this.player.setVelocity(0);
+    // If the player object exists and is active, let it update itself
+    if (this.player && this.player.active) {
+      this.player.update();
+    }
+
     // Add motion to bg tiles
     this.bg.tilePositionY -= 0.2;
-
-    // Handle moving right
-    if (this.keys.right.isDown || this.keys.D.isDown) {
-      this.player.body.velocity.x += 300;
-    }
-    // Handle moving left
-    if (this.keys.left.isDown || this.keys.A.isDown) {
-      this.player.body.velocity.x -= 300;
-    }
-
-    // Add up and down keys as well as WASD
-    if (this.keys.up.isDown || this.keys.W.isDown) {
-      this.player.body.velocity.y -= 300;
-    }
-    if (this.keys.down.isDown || this.keys.S.isDown) {
-      this.player.body.velocity.y += 300;
-    }
-
-    if (this.input.activePointer.isDown) {
-      // Check if player is more than 5 units away from the mouse click location to determine if it should move
-      const playerPos = new Phaser.Math.Vector2(this.player.x, this.player.y);
-      const pointerPos = new Phaser.Math.Vector2(this.input.activePointer.x, this.input.activePointer.y);
-      if (playerPos.distance(pointerPos) > 5) {
-        this.physics.moveTo(this.player, this.input.activePointer.x, this.input.activePointer.y, 300);
-      }
-    }
   }
 }
 
