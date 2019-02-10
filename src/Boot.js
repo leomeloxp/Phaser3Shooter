@@ -1,5 +1,6 @@
 // Import Phaser package
 import Phaser from 'phaser';
+import { GlobalSettings } from './ShooterGame';
 
 class Boot extends Phaser.Scene {
   preload() {
@@ -15,18 +16,15 @@ class Boot extends Phaser.Scene {
 
   create() {
     // Add Background
+
+    // Set up physics
+    this.physics.world.setBounds(0, 0, GlobalSettings.width, GlobalSettings.height);
+
     this.bg = this.add.tileSprite(0, 0, 1200, 800, 'sea');
     // Add Player
-    this.player = this.add.sprite(100, 100, 'player1', 0);
+    this.player = this.physics.add.sprite(300, 350, 'player1', 0);
 
-    // this.anims.create({
-    //   key: "fly",
-    //   frames: this.anims.generateFrameNumbers({ start: 0, end: 2 }),
-    //   frameRate: 16,
-    //   repeat: -1
-    // });
-
-    // this.player.play("fly");
+    this.player.setCollideWorldBounds(true);
 
     // Enable keyboard input for this scene
     this.keys = this.input.keyboard.createCursorKeys();
