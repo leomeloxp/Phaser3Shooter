@@ -39,6 +39,9 @@ class Boot extends Phaser.Scene {
 
   // Is called 60 times per second
   update() {
+    // Add motion to bg tiles
+    this.bg.tilePositionY -= 0.2;
+
     // Handle moving right
     if (this.keys.right.isDown || this.customKeys.keyD.isDown) {
       this.player.x += 10;
