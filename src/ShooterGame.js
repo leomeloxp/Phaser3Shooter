@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 import { Boot } from './Boot';
 
 const GlobalSettings = {
+  assetsUrl: 'https://leomeloxp.github.io/shmup/assets',
   height: 400,
   width: 600
 };

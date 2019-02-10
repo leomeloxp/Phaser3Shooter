@@ -6,9 +6,9 @@ class Boot extends Phaser.Scene {
   preload() {
     this.load.crossOrigin = 'anonymous';
 
-    this.load.image('sea', 'https://leomeloxp.github.io/shmup/assets/sea.png');
+    this.load.image('sea', `${GlobalSettings.assetsUrl}/sea.png`);
 
-    this.load.spritesheet('player1', 'https://leomeloxp.github.io/shmup/assets/player1.png', {
+    this.load.spritesheet('player1', `${GlobalSettings.assetsUrl}/player1.png`, {
       frameWidth: 64,
       frameHeight: 64
     });
