@@ -6,6 +6,7 @@ class Boot extends Phaser.Scene {
   preload() {
     this.load.crossOrigin = 'anonymous';
 
+    this.load.image('bullet', `${GlobalSettings.assetsUrl}/bullet.png`);
     this.load.image('sea', `${GlobalSettings.assetsUrl}/sea.png`);
 
     this.load.spritesheet('player1', `${GlobalSettings.assetsUrl}/player1.png`, {
@@ -35,10 +36,10 @@ class Boot extends Phaser.Scene {
   }
 
   // Is called 60 times per second
-  update() {
+  update(_, delta) {
     // If the player object exists and is active, let it update itself
     if (this.player && this.player.active) {
-      this.player.update();
+      this.player.update(_, delta);
     }
 
     // Add motion to bg tiles

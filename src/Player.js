@@ -14,9 +14,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(true);
 
     // Create array that will hold bullets
+    this.bullets = [];
+    this.shotDelayTime = 100;
+    this.shotDeltaTime = 0;
   }
 
-  update() {
+  update(_, delta) {
     this.setVelocity(0);
     this.shotDeltaTime += delta;
     // Handle moving right
@@ -37,6 +40,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     if (this.scene.input.activePointer.isDown) {
+      if (this.shotDeltaTime > this.shotDelayTime && this.bullets.length < 100) {
+        this.shotDeltaTime = 0;
+        this.fireBullet();
+      }
       // Check if player is more than 5 units away from the mouse click location to determine if it should move
       const playerPos = new Phaser.Math.Vector2(this.x, this.y);
       const pointerPos = new Phaser.Math.Vector2(this.scene.input.activePointer.x, this.scene.input.activePointer.y);
@@ -44,5 +51,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.scene.physics.moveTo(this, this.scene.input.activePointer.x, this.scene.input.activePointer.y, 300);
       }
     }
+  }
+
+  fireBullet() {
+    const bullet = this.scene.physics.add.image(this.x, this.y, 'bullet');
+    bullet.setVelocity(0, -500);
+    this.bullets.push(bullet);
   }
 }
