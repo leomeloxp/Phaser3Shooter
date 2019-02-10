@@ -27,34 +27,45 @@ class Boot extends Phaser.Scene {
     this.player.setCollideWorldBounds(true);
 
     // Enable keyboard input for this scene
+    // Enable arrow, shift and space keys
     this.keys = this.input.keyboard.createCursorKeys();
-    this.customKeys = {};
-    this.customKeys.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-    this.customKeys.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-    this.customKeys.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-    this.customKeys.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    // Enable custom keys (WASD, etc)
+    this.keys.W = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+    this.keys.A = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+    this.keys.S = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+    this.keys.D = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
   }
 
   // Is called 60 times per second
   update() {
+    this.player.setVelocity(0);
     // Add motion to bg tiles
     this.bg.tilePositionY -= 0.2;
 
     // Handle moving right
-    if (this.keys.right.isDown || this.customKeys.keyD.isDown) {
-      this.player.x += 10;
+    if (this.keys.right.isDown || this.keys.D.isDown) {
+      this.player.body.velocity.x += 300;
     }
     // Handle moving left
-    if (this.keys.left.isDown || this.customKeys.keyA.isDown) {
-      this.player.x -= 10;
+    if (this.keys.left.isDown || this.keys.A.isDown) {
+      this.player.body.velocity.x -= 300;
     }
 
     // Add up and down keys as well as WASD
-    if (this.keys.up.isDown || this.customKeys.keyW.isDown) {
-      this.player.y -= 10;
+    if (this.keys.up.isDown || this.keys.W.isDown) {
+      this.player.body.velocity.y -= 300;
     }
-    if (this.keys.down.isDown || this.customKeys.keyS.isDown) {
-      this.player.y += 10;
+    if (this.keys.down.isDown || this.keys.S.isDown) {
+      this.player.body.velocity.y += 300;
+    }
+
+    if (this.input.activePointer.isDown) {
+      // Check if player is more than 5 units away from the mouse click location to determine if it should move
+      const playerPos = new Phaser.Math.Vector2(this.player.x, this.player.y);
+      const pointerPos = new Phaser.Math.Vector2(this.input.activePointer.x, this.input.activePointer.y);
+      if (playerPos.distance(pointerPos) > 5) {
+        this.physics.moveTo(this.player, this.input.activePointer.x, this.input.activePointer.y, 300);
+      }
     }
   }
 }
