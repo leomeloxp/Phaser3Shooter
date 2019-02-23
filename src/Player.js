@@ -1,10 +1,10 @@
-import Phaser from 'phaser';
-import { GlobalSettings } from './ShooterGame';
+import Phaser from "phaser";
+import { GlobalSettings } from "./ShooterGame";
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(scene) {
     // Creates the Sprite instance for our Player object
-    super(scene, GlobalSettings.width / 2, GlobalSettings.height - 50, 'player1', 0);
+    super(scene, GlobalSettings.width / 2, GlobalSettings.height - 50, "player1", 0);
 
     // Add player to passed in scene as Sprite
     scene.add.existing(this);
@@ -54,7 +54,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   fireBullet() {
-    const bullet = this.scene.physics.add.image(this.x, this.y, 'bullet');
+    const bullet = this.scene.physics.add.image(this.x, this.y, "bullet");
     bullet.setVelocity(0, -500);
     this.bullets.push(bullet);
   }

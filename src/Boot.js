@@ -1,15 +1,15 @@
 // Import Phaser package
-import Phaser from 'phaser';
-import { Player } from './Player';
-import { GlobalSettings } from './ShooterGame';
+import Phaser from "phaser";
+import { Player } from "./Player";
+import { GlobalSettings } from "./ShooterGame";
 class Boot extends Phaser.Scene {
   preload() {
-    this.load.crossOrigin = 'anonymous';
+    this.load.crossOrigin = "anonymous";
 
-    this.load.image('bullet', `${GlobalSettings.assetsUrl}/bullet.png`);
-    this.load.image('sea', `${GlobalSettings.assetsUrl}/sea.png`);
+    this.load.image("bullet", `${GlobalSettings.assetsUrl}/bullet.png`);
+    this.load.image("sea", `${GlobalSettings.assetsUrl}/sea.png`);
 
-    this.load.spritesheet('player1', `${GlobalSettings.assetsUrl}/player1.png`, {
+    this.load.spritesheet("player1", `${GlobalSettings.assetsUrl}/player1.png`, {
       frameWidth: 64,
       frameHeight: 64
     });
@@ -20,7 +20,7 @@ class Boot extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, GlobalSettings.width, GlobalSettings.height);
 
     // Add Background
-    this.bg = this.add.tileSprite(0, 0, 1200, 800, 'sea');
+    this.bg = this.add.tileSprite(0, 0, 1200, 800, "sea");
 
     // Add Player
     this.player = new Player(this);
