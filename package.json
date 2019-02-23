@@ -4,7 +4,7 @@
   "description": "Top Down Shooter Game made using Phaser 3",
   "main": "index.html",
   "scripts": {
-    "start": "parcel index.html --open",
+    "start": "parcel index.html --open --no-hmr --host 0.0.0.0 --port 3000",
     "build": "parcel build index.html"
   },
   "dependencies": {
