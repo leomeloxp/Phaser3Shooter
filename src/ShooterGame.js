@@ -1,9 +1,9 @@
 // Import Phaser package
-import Phaser from 'phaser';
-import { Boot } from './Boot';
+import Phaser from "phaser";
+import { StageOne } from "./StageOne";
 
 const GlobalSettings = {
-  assetsUrl: 'https://leomeloxp.github.io/shmup/assets',
+  assetsUrl: "https://leomeloxp.github.io/shmup/assets",
   height: 400,
   width: 600
 };
@@ -17,17 +17,17 @@ class ShooterGame extends Phaser.Game {
       width: GlobalSettings.width,
       height: GlobalSettings.height,
       // Where in the HTML file the game will render
-      parent: 'game',
+      parent: "game",
       physics: {
-        default: 'arcade',
+        default: "arcade",
         arcade: {
           debug: true
         }
       }
     });
 
-    this.scene.add('Boot', new Boot());
-    this.scene.start('Boot');
+    this.scene.add("StageOne", new StageOne());
+    this.scene.start("StageOne");
   }
 }
 

@@ -2,7 +2,7 @@
 import Phaser from "phaser";
 import { Player } from "./Player";
 import { GlobalSettings } from "./ShooterGame";
-class Boot extends Phaser.Scene {
+class StageOne extends Phaser.Scene {
   preload() {
     this.load.crossOrigin = "anonymous";
 
@@ -47,4 +47,4 @@ class Boot extends Phaser.Scene {
   }
 }
 
-export { Boot };
+export { StageOne };
