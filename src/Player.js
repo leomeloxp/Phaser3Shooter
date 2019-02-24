@@ -17,6 +17,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.bullets = this.scene.add.group({ maxSize: 100 });
     this.shotDelayTime = 100;
     this.shotDeltaTime = 0;
+
+    this.createAnimations();
+    this.anims.play("fly");
   }
 
   update(_, delta) {
@@ -71,5 +74,29 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       }
     });
   }
+
+  /**
+   * Creates the animations to be used by the player sprite.
+   */
+  createAnimations() {
+    // Regular fly animation
+    this.scene.anims.create({
+      key: "fly",
+      frames: [{ key: "player1", frame: 0 }, { key: "player1", frame: 1 }, { key: "player1", frame: 2 }],
+      frameRate: 30,
+      repeat: -1
+    });
+    // Ghost/Invincibility animation
+    this.scene.anims.create({
+      key: "ghost",
+      frames: [
+        { key: "player1", frame: 3 },
+        { key: "player1", frame: 0 },
+        { key: "player1", frame: 3 },
+        { key: "player1", frame: 1 }
+      ],
+      frameRate: 20,
+      repeat: -1
+    });
   }
 }
