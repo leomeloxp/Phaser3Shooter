@@ -38,17 +38,21 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.scene.keys.down.isDown || this.scene.keys.S.isDown) {
       this.body.velocity.y += 300;
     }
-
+    // Mouse movement
     if (this.scene.input.activePointer.isDown) {
-      if (this.shotDeltaTime > this.shotDelayTime && this.bullets.length < 100) {
-        this.shotDeltaTime = 0;
-        this.fireBullet();
-      }
       // Check if player is more than 5 units away from the mouse click location to determine if it should move
       const playerPos = new Phaser.Math.Vector2(this.x, this.y);
       const pointerPos = new Phaser.Math.Vector2(this.scene.input.activePointer.x, this.scene.input.activePointer.y);
       if (playerPos.distance(pointerPos) > 5) {
         this.scene.physics.moveTo(this, this.scene.input.activePointer.x, this.scene.input.activePointer.y, 300);
+      }
+    }
+
+    // Bullet firing trigger logic
+    if (this.scene.input.activePointer.isDown || this.scene.keys.space.isDown) {
+      if (this.shotDeltaTime > this.shotDelayTime && this.bullets.length < 100) {
+        this.shotDeltaTime = 0;
+        this.fireBullet();
       }
     }
   }
