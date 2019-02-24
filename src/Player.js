@@ -14,7 +14,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(true);
 
     // Create array that will hold bullets
-    this.bullets = [];
+    this.bullets = this.scene.add.group({ maxSize: 100 });
     this.shotDelayTime = 100;
     this.shotDeltaTime = 0;
   }
@@ -50,16 +50,26 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     // Bullet firing trigger logic
     if (this.scene.input.activePointer.isDown || this.scene.keys.space.isDown) {
-      if (this.shotDeltaTime > this.shotDelayTime && this.bullets.length < 100) {
+      if (this.shotDeltaTime > this.shotDelayTime) {
         this.shotDeltaTime = 0;
         this.fireBullet();
       }
     }
+    this.checkBulletsPosition();
   }
 
   fireBullet() {
     const bullet = this.scene.physics.add.image(this.x, this.y, "bullet");
     bullet.setVelocity(0, -500);
-    this.bullets.push(bullet);
+    this.bullets.add(bullet);
+  }
+
+  checkBulletsPosition() {
+    this.bullets.getChildren().forEach(bullet => {
+      if (bullet.y < 0) {
+        bullet.destroy();
+      }
+    });
+  }
   }
 }
