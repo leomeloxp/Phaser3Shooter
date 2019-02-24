@@ -6,6 +6,8 @@ import { GlobalSettings } from "./ShooterGame";
 
 /**
  * The first scene of our game.
+ * @class StageOne
+ * @extends {Phaser.Scene}
  */
 class StageOne extends Phaser.Scene {
   /**

@@ -1,7 +1,18 @@
 import Phaser from "phaser";
 import { GlobalSettings } from "./ShooterGame";
 
+/**
+ * Class responsible for anything related to the player object.
+ * @export
+ * @class Player
+ * @extends {Phaser.Physics.Arcade.Sprite}
+ */
 export class Player extends Phaser.Physics.Arcade.Sprite {
+  /**
+   * Creates an instance of Player.
+   * @param {Phaser.Scene} scene - The scene this player object will belong to.
+   * @memberof Player
+   */
   constructor(scene) {
     // Creates the Sprite instance for our Player object
     super(scene, GlobalSettings.width / 2, GlobalSettings.height - 50, "player1", 0);
@@ -22,6 +33,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.anims.play("fly");
   }
 
+  /**
+   * Updates all aspects of this player's object at every frame.
+   * @param {*} _ - N/A for now
+   * @param {number} delta - Number of miliseconds since the last update cycle has been called.
+   * @memberof Player
+   */
   update(_, delta) {
     this.setVelocity(0);
     this.shotDeltaTime += delta;
@@ -61,12 +78,20 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.checkBulletsPosition();
   }
 
+  /**
+   * Handles the logic around firing player bullets.
+   * @memberof Player
+   */
   fireBullet() {
     const bullet = this.scene.physics.add.image(this.x, this.y, "bullet");
     bullet.setVelocity(0, -500);
     this.bullets.add(bullet);
   }
 
+  /**
+   * Handles logic related to the player's bullets' position.
+   * @memberof Player
+   */
   checkBulletsPosition() {
     this.bullets.getChildren().forEach(bullet => {
       if (bullet.y < 0) {
@@ -77,6 +102,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   /**
    * Creates the animations to be used by the player sprite.
+   * @memberof Player
    */
   createAnimations() {
     // Regular fly animation

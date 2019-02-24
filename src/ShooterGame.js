@@ -8,8 +8,16 @@ const GlobalSettings = {
   width: 600
 };
 
-// Create base game class
+/**
+ * Base game class used for our Shooter Game.
+ * @class ShooterGame
+ * @extends {Phaser.Game}
+ */
 class ShooterGame extends Phaser.Game {
+  /**
+   * Creates an instance of ShooterGame.
+   * @memberof ShooterGame
+   */
   constructor() {
     super({
       // Type of render (don't worry about it)
