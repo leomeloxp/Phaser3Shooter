@@ -125,4 +125,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       repeat: -1
     });
   }
+
+  /**
+   * Handles player killing logic and animations.
+   * @memberof Player
+   */
+  kill() {
+    this.destroy();
+  }
 }
