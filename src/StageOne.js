@@ -39,6 +39,10 @@ class StageOne extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 32
     });
+    this.load.spritesheet("explosion", `${GlobalSettings.assetsUrl}/explosion.png`, {
+      frameWidth: 32,
+      frameHeight: 32
+    });
   }
 
   /**
@@ -63,6 +67,30 @@ class StageOne extends Phaser.Scene {
     this.keys.A = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keys.S = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     this.keys.D = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
+    // Add explosion animation
+    this.anims.create({
+      key: "explode",
+      frames: [
+        { key: "explosion", frame: 0 },
+        { key: "explosion", frame: 1 },
+        { key: "explosion", frame: 2 },
+        { key: "explosion", frame: 3 },
+        { key: "explosion", frame: 4 },
+        { key: "explosion", frame: 5 }
+      ],
+      frameRate: 15,
+      repeat: 0,
+      hideOnComplete: true
+    });
+
+    this.physics.add.collider(this.player, this.enemies, (player, enemy) => {
+      this.handlePlayerAndEnemiesCollision(player, enemy);
+    });
+
+    this.physics.add.collider(this.enemies, this.player.bullets, (enemy, bullet) => {
+      this.handleEnemyAndPlayerBulletCollision(enemy, bullet);
+    });
   }
 
   /**
@@ -99,6 +127,41 @@ class StageOne extends Phaser.Scene {
   spawnEnemy() {
     const enemy = new Enemy(this, this.game.rdg.between(0, this.game.config.width), 32);
     this.enemies.add(enemy);
+  }
+
+  /**
+   * Handles the logic for collisions between enemies and player bullets.
+   * @param {Enemy} enemy
+   * @param {Phaser.Physics.Sprite} bullet
+   * @memberof StageOne
+   */
+  handleEnemyAndPlayerBulletCollision(enemy, bullet) {
+    const explosion = this.add.sprite(enemy.x, enemy.y, "explosion", 0);
+    bullet.destroy();
+    enemy.destroy();
+    explosion.on(`${Phaser.Animations.Events.SPRITE_ANIMATION_KEY_COMPLETE}explode`, (a, b, c, d) => {
+      explosion.destroy();
+    });
+    explosion.anims.play("explode");
+  }
+
+  /**
+   * Handles the logic for collisions between player and enemies.
+   * @param {Player} player
+   * @param {Enemy} enemy
+   * @memberof StageOne
+   */
+  handlePlayerAndEnemiesCollision(player, enemy) {
+    // Destroy the enemy
+    // Animate enemy explosion
+    const enemyExplosion = this.add.sprite(enemy.x, enemy.y, "explosion", 0);
+    enemy.destroy();
+    enemyExplosion.on(`${Phaser.Animations.Events.SPRITE_ANIMATION_KEY_COMPLETE}explode`, (a, b, c, d) => {
+      enemyExplosion.destroy();
+    });
+    enemyExplosion.anims.play("explode");
+    // Kill player
+    player.kill();
   }
 }
 
