@@ -1,12 +1,7 @@
 // Import Phaser package
 import Phaser from "phaser";
+import { GlobalSettings } from "./GlobalSettings";
 import { StageOne } from "./StageOne";
-
-const GlobalSettings = {
-  assetsUrl: "https://leomeloxp.github.io/shmup/assets",
-  height: 400,
-  width: 600
-};
 
 /**
  * Base game class used for our Shooter Game.
@@ -41,4 +36,4 @@ class ShooterGame extends Phaser.Game {
   }
 }
 
-export { ShooterGame, GlobalSettings };
+export { ShooterGame };

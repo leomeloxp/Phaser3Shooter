@@ -1,8 +1,8 @@
 // Import Phaser package
 import Phaser from "phaser";
 import { Enemy } from "./Enemy";
+import { GlobalSettings } from "./GlobalSettings";
 import { Player } from "./Player";
-import { GlobalSettings } from "./ShooterGame";
 
 /**
  * The first scene of our game.
@@ -18,7 +18,6 @@ class StageOne extends Phaser.Scene {
     // Add Enemies Group.
     this.enemies = this.add.group();
     this.enemyDelta = 0;
-    this.enemyDelay = 3000;
   }
   /**
    * Preloads any assets that will be used in this Scene.
@@ -107,7 +106,7 @@ class StageOne extends Phaser.Scene {
       this.player.update(elapsedTime, deltaTime);
     }
 
-    if (elapsedTime > 3 && this.enemyDelta > this.enemyDelay) {
+    if (elapsedTime > 3 && this.enemyDelta > GlobalSettings.enemySpawnDelay) {
       this.enemyDelta = 0;
       this.spawnEnemy();
     }
@@ -125,7 +124,7 @@ class StageOne extends Phaser.Scene {
    * @memberof StageOne
    */
   spawnEnemy() {
-    const enemy = new Enemy(this, this.game.rdg.between(0, this.game.config.width), 32);
+    const enemy = new Enemy(this, this.game.rdg.between(32, this.game.config.width - 32), 32);
     this.enemies.add(enemy);
   }
 
@@ -139,7 +138,7 @@ class StageOne extends Phaser.Scene {
     const explosion = this.add.sprite(enemy.x, enemy.y, "explosion", 0);
     bullet.destroy();
     enemy.destroy();
-    explosion.on(`${Phaser.Animations.Events.SPRITE_ANIMATION_KEY_COMPLETE}explode`, (a, b, c, d) => {
+    explosion.on(`${Phaser.Animations.Events.SPRITE_ANIMATION_KEY_COMPLETE}explode`, () => {
       explosion.destroy();
     });
     explosion.anims.play("explode");
@@ -156,7 +155,7 @@ class StageOne extends Phaser.Scene {
     // Animate enemy explosion
     const enemyExplosion = this.add.sprite(enemy.x, enemy.y, "explosion", 0);
     enemy.destroy();
-    enemyExplosion.on(`${Phaser.Animations.Events.SPRITE_ANIMATION_KEY_COMPLETE}explode`, (a, b, c, d) => {
+    enemyExplosion.on(`${Phaser.Animations.Events.SPRITE_ANIMATION_KEY_COMPLETE}explode`, () => {
       enemyExplosion.destroy();
     });
     enemyExplosion.anims.play("explode");

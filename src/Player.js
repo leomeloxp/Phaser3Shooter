@@ -1,5 +1,8 @@
 import Phaser from "phaser";
-import { GlobalSettings } from "./ShooterGame";
+import { GlobalSettings } from "./GlobalSettings";
+
+const initialX = GlobalSettings.width / 2;
+const initialY = GlobalSettings.height - 50;
 
 /**
  * Class responsible for anything related to the player object.
@@ -15,7 +18,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
    */
   constructor(scene) {
     // Creates the Sprite instance for our Player object
-    super(scene, GlobalSettings.width / 2, GlobalSettings.height - 50, "player1", 0);
+    super(scene, initialX, initialY, "player1", 0);
 
     // Add player to passed in scene as Sprite
     scene.add.existing(this);
@@ -26,8 +29,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     // Create array that will hold bullets
     this.bullets = this.scene.add.group({ maxSize: 100 });
-    this.shotDelayTime = 100;
     this.shotDeltaTime = 0;
+    this.lives = GlobalSettings.playerInitialLives;
 
     this.createAnimations();
     this.anims.play("fly");
@@ -70,7 +73,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     // Bullet firing trigger logic
     if (this.scene.input.activePointer.isDown || this.scene.keys.space.isDown) {
-      if (this.shotDeltaTime > this.shotDelayTime) {
+      if (this.shotDeltaTime > GlobalSettings.playerShotDelay) {
         this.shotDeltaTime = 0;
         this.fireBullet();
       }
@@ -122,7 +125,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         { key: "player1", frame: 1 }
       ],
       frameRate: 20,
-      repeat: -1
+      repeat: 5
     });
   }
 
@@ -131,6 +134,24 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
    * @memberof Player
    */
   kill() {
-    this.destroy();
+    // Subtract 1 life from player current lives.
+    this.lives -= 1;
+    // If player has run out of lives, trigger game over logic.
+    if (this.lives < 1) {
+      this.destroy();
+      // Show a popup and refresh the page so we can play again.
+      alert("Game Over!");
+      document.location = document.location;
+      // TODO: handle game restart without the need to refresh the page.
+    }
+
+    // If the player still has lives, play a little death animation and reset the player's position so they can continue playing
+    this.x = initialX;
+    this.y = initialY;
+    this.on(`${Phaser.Animations.Events.SPRITE_ANIMATION_KEY_COMPLETE}ghost`, () => {
+      this.anims.play("fly");
+    });
+
+    this.anims.play("ghost");
   }
 }
