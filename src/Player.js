@@ -31,6 +31,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.bullets = this.scene.add.group({ maxSize: 100 });
     this.shotDeltaTime = 0;
     this.lives = GlobalSettings.playerInitialLives;
+    this.score = 0;
 
     this.createAnimations();
     this.anims.play("fly");
@@ -153,5 +154,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     });
 
     this.anims.play("ghost");
+  }
+
+  addToScore(points = 0) {
+    this.score += points;
   }
 }

@@ -83,11 +83,11 @@ class StageOne extends Phaser.Scene {
       hideOnComplete: true
     });
 
-    this.physics.add.collider(this.player, this.enemies, (player, enemy) => {
+    this.physics.add.overlap(this.player, this.enemies, (player, enemy) => {
       this.handlePlayerAndEnemiesCollision(player, enemy);
     });
 
-    this.physics.add.collider(this.enemies, this.player.bullets, (enemy, bullet) => {
+    this.physics.add.overlap(this.enemies, this.player.bullets, (enemy, bullet) => {
       this.handleEnemyAndPlayerBulletCollision(enemy, bullet);
     });
   }
@@ -137,6 +137,9 @@ class StageOne extends Phaser.Scene {
   handleEnemyAndPlayerBulletCollision(enemy, bullet) {
     bullet.destroy();
     enemy.handleCollision();
+    if (!enemy.active) {
+      this.player.addToScore(enemy.reward);
+    }
   }
 
   /**
@@ -146,10 +149,14 @@ class StageOne extends Phaser.Scene {
    * @memberof StageOne
    */
   handlePlayerAndEnemiesCollision(player, enemy) {
-    // Destroy the enemy
-    // Animate enemy explosion
+    // Add to player score
+    if (!enemy.active) {
+      this.player.addToScore(enemy.reward);
+    }
+    // Run enemy collision handling
     enemy.handleCollision();
-    // Kill player
+
+    // Run player collision handling
     player.handleCollision();
   }
 }
