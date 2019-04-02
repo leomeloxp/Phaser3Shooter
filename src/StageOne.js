@@ -135,13 +135,8 @@ class StageOne extends Phaser.Scene {
    * @memberof StageOne
    */
   handleEnemyAndPlayerBulletCollision(enemy, bullet) {
-    const explosion = this.add.sprite(enemy.x, enemy.y, "explosion", 0);
     bullet.destroy();
-    enemy.destroy();
-    explosion.on(`${Phaser.Animations.Events.SPRITE_ANIMATION_KEY_COMPLETE}explode`, () => {
-      explosion.destroy();
-    });
-    explosion.anims.play("explode");
+    enemy.handleCollision();
   }
 
   /**
@@ -153,14 +148,9 @@ class StageOne extends Phaser.Scene {
   handlePlayerAndEnemiesCollision(player, enemy) {
     // Destroy the enemy
     // Animate enemy explosion
-    const enemyExplosion = this.add.sprite(enemy.x, enemy.y, "explosion", 0);
-    enemy.destroy();
-    enemyExplosion.on(`${Phaser.Animations.Events.SPRITE_ANIMATION_KEY_COMPLETE}explode`, () => {
-      enemyExplosion.destroy();
-    });
-    enemyExplosion.anims.play("explode");
+    enemy.handleCollision();
     // Kill player
-    player.kill();
+    player.handleCollision();
   }
 }
 

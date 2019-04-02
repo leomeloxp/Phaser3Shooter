@@ -133,7 +133,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
    * Handles player killing logic and animations.
    * @memberof Player
    */
-  kill() {
+  handleCollision() {
     // Subtract 1 life from player current lives.
     this.lives -= 1;
     // If player has run out of lives, trigger game over logic.

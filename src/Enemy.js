@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { GlobalSettings } from "./GlobalSettings";
 
 /**
  * A basic enemy object that flies across the screen in a straight vertical path.
@@ -24,6 +25,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this);
     // Set enemy initial velocity.
     this.setVelocity(0, 25);
+    this.health = GlobalSettings.enemyHealth;
   }
 
   /**
@@ -34,6 +36,18 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     // Destroy enemy if they leave the map.
     if (this.y > this.scene.game.config.height + this.displayHeight) {
       this.destroy();
+    }
+  }
+
+  handleCollision() {
+    this.health -= 1;
+    if (this.health < 1) {
+      const explosion = this.scene.add.sprite(this.x, this.y, "explosion", 0);
+      this.destroy();
+      explosion.on(`${Phaser.Animations.Events.SPRITE_ANIMATION_KEY_COMPLETE}explode`, () => {
+        explosion.destroy();
+      });
+      explosion.anims.play("explode");
     }
   }
 }
