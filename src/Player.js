@@ -137,14 +137,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   handleCollision() {
     // Subtract 1 life from player current lives.
     this.lives -= 1;
-    this.scene.updateTextLives();
+    this.scene.updateGUI();
     // If player has run out of lives, trigger game over logic.
     if (this.lives < 1) {
+      // Signals that the player failed to complete this scene by rejecting its promise.
+      this.scene._rejectDone();
+      // Lastly, destroy this player object.
       this.destroy();
-      // Show a popup and refresh the page so we can play again.
-      alert("Game Over!");
-      document.location = document.location;
-      // TODO: handle game restart without the need to refresh the page.
+      // Return early as the player object no longer exist.
+      return;
     }
 
     // If the player still has lives, play a little death animation and reset the player's position so they can continue playing
@@ -157,8 +158,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.anims.play("ghost");
   }
 
+  /**
+   * Adds the number of supplied points to our player's score counter. (makes a call to update GUI)
+   * @param {number} [points=0]
+   * @memberof Player
+   */
   addToScore(points = 0) {
     this.score += points;
-    this.scene.updateTextScore();
+    this.scene.updateGUI();
   }
 }

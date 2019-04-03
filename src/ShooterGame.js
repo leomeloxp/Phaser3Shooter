@@ -30,9 +30,22 @@ class ShooterGame extends Phaser.Game {
     });
     // Create a random data generator to be used across the game.
     this.rdg = new Phaser.Math.RandomDataGenerator();
-    // Add furst Scene and start it.
-    this.scene.add("StageOne", new StageOne());
+    // Add first Scene and start it.
+    const stageOne = new StageOne("StageOne");
+    this.scene.add("StageOne", stageOne);
     this.scene.start("StageOne");
+    // Handle the completion of the first Scene.
+    stageOne.done
+      .then(() => {
+        // TODO add actual StageTwo instead of reclycing StageOne.
+        this.scene.add("StageTwo", new StageOne("StageTwo"));
+        this.scene.switch("StageOne", "StageTwo");
+      })
+      .catch(() => {
+        // TODO add proper game over handling logic;
+        alert("Game Over!");
+        document.location = document.location;
+      });
   }
 }
 

@@ -10,6 +10,14 @@ import { Player } from "./Player";
  * @extends {Phaser.Scene}
  */
 class StageOne extends Phaser.Scene {
+  constructor(...args) {
+    super(...args);
+    // Create a promise that will be used to signal scene completion and game over
+    this.done = new Promise((resolve, reject) => {
+      this._resolveDone = resolve;
+      this._rejectDone = reject;
+    });
+  }
   /**
    * Initialise this Scene object.
    * @memberof StageOne
@@ -117,6 +125,8 @@ class StageOne extends Phaser.Scene {
       enemy.update(elapsedTime, deltaTime);
     });
 
+    this.checkForEndGame();
+
     // Add motion to bg tiles
     this.bg.tilePositionY -= 0.2;
   }
@@ -161,11 +171,24 @@ class StageOne extends Phaser.Scene {
     // Run player collision handling
     player.handleCollision();
   }
-  updateTextLives() {
+
+  /**
+   * Updates the GUI so it reflects internal game state correctly.
+   * @memberof StageOne
+   */
+  updateGUI() {
     this.textLives.text = `Lives: ${this.player.lives}`;
-  }
-  updateTextScore() {
     this.textScore.text = `Score: ${this.player.score}`;
+  }
+
+  /**
+   * Checks whether this scene should be marked as completed.
+   * @memberof StageOne
+   */
+  checkForEndGame() {
+    if (this.player.score > 1000) {
+      this._resolveDone();
+    }
   }
 }
 
