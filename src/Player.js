@@ -137,6 +137,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   handleCollision() {
     // Subtract 1 life from player current lives.
     this.lives -= 1;
+    this.scene.updateTextLives();
     // If player has run out of lives, trigger game over logic.
     if (this.lives < 1) {
       this.destroy();
@@ -158,5 +159,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   addToScore(points = 0) {
     this.score += points;
+    this.scene.updateTextScore();
   }
 }

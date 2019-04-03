@@ -90,6 +90,8 @@ class StageOne extends Phaser.Scene {
     this.physics.add.overlap(this.enemies, this.player.bullets, (enemy, bullet) => {
       this.handleEnemyAndPlayerBulletCollision(enemy, bullet);
     });
+    this.textLives = this.add.text(10, 10, `Lives: ${this.player.lives}`);
+    this.textScore = this.add.text(100, 10, `Score: ${this.player.score}`);
   }
 
   /**
@@ -158,6 +160,12 @@ class StageOne extends Phaser.Scene {
 
     // Run player collision handling
     player.handleCollision();
+  }
+  updateTextLives() {
+    this.textLives.text = `Lives: ${this.player.lives}`;
+  }
+  updateTextScore() {
+    this.textScore.text = `Score: ${this.player.score}`;
   }
 }
 
