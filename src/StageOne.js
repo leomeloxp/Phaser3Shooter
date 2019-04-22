@@ -188,6 +188,8 @@ class StageOne extends Phaser.Scene {
   checkForEndGame() {
     if (this.player.score > 1000) {
       this._resolveDone();
+    } else if (!this.player.active) {
+      this._rejectDone();
     }
   }
 }

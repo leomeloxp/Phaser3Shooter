@@ -34,6 +34,7 @@ class ShooterGame extends Phaser.Game {
     const stageOne = new StageOne("StageOne");
     this.scene.add("StageOne", stageOne);
     this.scene.start("StageOne");
+
     // Handle the completion of the first Scene.
     stageOne.done
       .then(() => {
@@ -43,8 +44,11 @@ class ShooterGame extends Phaser.Game {
       })
       .catch(() => {
         // TODO add proper game over handling logic;
-        alert("Game Over!");
-        document.location = document.location;
+        const text = stageOne.add.text(GlobalSettings.width / 2, GlobalSettings.height / 2, "Game Over!", {
+          align: "center",
+          fontSize: 32
+        });
+        text.setOrigin(0.5);
       });
   }
 }
