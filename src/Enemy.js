@@ -27,6 +27,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setVelocity(0, 25);
     this.health = GlobalSettings.enemyHealth;
     this.reward = GlobalSettings.enemyReward;
+
+    this.createAnimation();
+    this.anims.play("enemy_fly");
   }
 
   /**
@@ -38,6 +41,32 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     if (this.y > this.scene.game.config.height + this.displayHeight) {
       this.destroy();
     }
+  }
+
+  /**
+   * Creates the animations to be used by the enemy sprite.
+   * @memberof Enemy
+   */
+  createAnimation() {
+    // Regular fly animation
+    this.scene.anims.create({
+      key: "enemy_fly",
+      frames: [{ key: "enemy", frame: 0 }, { key: "enemy", frame: 1 }, { key: "enemy", frame: 2 }],
+      frameRate: 30,
+      repeat: -1
+    });
+
+    this.scene.anims.create({
+      key: "enemy_ghost",
+      frames: [
+        { key: "enemy", frame: 3 },
+        { key: "enemy", frame: 0 },
+        { key: "enemy", frame: 3 },
+        { key: "enemy", frame: 1 }
+      ],
+      frameRate: 20,
+      repeat: 1
+    });
   }
 
   handleCollision() {
