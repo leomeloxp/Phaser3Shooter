@@ -1,6 +1,7 @@
 // Import Phaser package
 import Phaser from "phaser";
 import { Enemy } from "./Enemy";
+import { EnemyShooter } from "./EnemyShooter";
 import { GlobalSettings } from "./GlobalSettings";
 import { Player } from "./Player";
 
@@ -26,6 +27,7 @@ class StageOne extends Phaser.Scene {
     // Add Enemies Group.
     this.enemies = this.add.group();
     this.enemyDelta = 0;
+    this.enemyShooterDelta = 0;
   }
   /**
    * Preloads any assets that will be used in this Scene.
@@ -43,6 +45,10 @@ class StageOne extends Phaser.Scene {
     });
 
     this.load.spritesheet("enemy", `${GlobalSettings.assetsUrl}/enemy.png`, {
+      frameWidth: 32,
+      frameHeight: 32
+    });
+    this.load.spritesheet("shooting-enemy", `${GlobalSettings.assetsUrl}/shooting-enemy.png`, {
       frameWidth: 32,
       frameHeight: 32
     });
@@ -75,21 +81,7 @@ class StageOne extends Phaser.Scene {
     this.keys.S = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     this.keys.D = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
-    // Add explosion animation
-    this.anims.create({
-      key: "explode",
-      frames: [
-        { key: "explosion", frame: 0 },
-        { key: "explosion", frame: 1 },
-        { key: "explosion", frame: 2 },
-        { key: "explosion", frame: 3 },
-        { key: "explosion", frame: 4 },
-        { key: "explosion", frame: 5 }
-      ],
-      frameRate: 15,
-      repeat: 0,
-      hideOnComplete: true
-    });
+    this.createAnimation();
 
     this.physics.add.overlap(this.player, this.enemies, (player, enemy) => {
       this.handlePlayerAndEnemiesCollision(player, enemy);
@@ -111,14 +103,22 @@ class StageOne extends Phaser.Scene {
   update(elapsedTime, deltaTime) {
     // Update timekeepers
     this.enemyDelta += deltaTime;
+    this.enemyShooterDelta += deltaTime;
     // If the player object exists and is active, let it update itself
     if (this.player && this.player.active) {
       this.player.update(elapsedTime, deltaTime);
     }
 
+    // Spawn regular enemy
     if (elapsedTime > 3 && this.enemyDelta > GlobalSettings.enemySpawnDelay) {
       this.enemyDelta = 0;
       this.spawnEnemy();
+    }
+
+    // Spawn shooter enemy
+    if (elapsedTime > 3 && this.enemyShooterDelta > GlobalSettings.enemyShooterSpawnDelay) {
+      this.enemyShooterDelta = 0;
+      this.spawnEnemyShooter();
     }
 
     this.enemies.getChildren().forEach(enemy => {
@@ -137,6 +137,17 @@ class StageOne extends Phaser.Scene {
    */
   spawnEnemy() {
     const enemy = new Enemy(this, this.game.rdg.between(32, this.game.config.width - 32), 32);
+    enemy.playAnimation("enemy_fly");
+    this.enemies.add(enemy);
+  }
+
+  /**
+   * Spawns a new shooter type enemy object at a random horizontal position and add them to the group of enemies.
+   * @memberof StageOne
+   */
+  spawnEnemyShooter() {
+    const enemy = new EnemyShooter(this, this.game.rdg.between(32, this.game.config.width - 32), 32);
+    enemy.playAnimation("enemyShooter_fly");
     this.enemies.add(enemy);
   }
 
@@ -192,6 +203,70 @@ class StageOne extends Phaser.Scene {
       this._rejectDone();
     }
   }
-}
 
+  /**
+   * Creates the animations to be used during this scene.
+   * @memberof StageOne
+   */
+  createAnimation() {
+    // Add explosion animation
+    this.anims.create({
+      key: "explode",
+      frames: [
+        { key: "explosion", frame: 0 },
+        { key: "explosion", frame: 1 },
+        { key: "explosion", frame: 2 },
+        { key: "explosion", frame: 3 },
+        { key: "explosion", frame: 4 },
+        { key: "explosion", frame: 5 }
+      ],
+      frameRate: 15,
+      repeat: 0,
+      hideOnComplete: true
+    });
+
+    // Regular enemy fly animation
+    this.anims.create({
+      key: "enemy_fly",
+      frames: [{ key: "enemy", frame: 0 }, { key: "enemy", frame: 1 }, { key: "enemy", frame: 2 }],
+      frameRate: 30,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: "enemy_ghost",
+      frames: [
+        { key: "enemy", frame: 3 },
+        { key: "enemy", frame: 0 },
+        { key: "enemy", frame: 3 },
+        { key: "enemy", frame: 1 }
+      ],
+      frameRate: 20,
+      repeat: 1
+    });
+    // Regular enemy fly animation
+    this.anims.create({
+      key: "enemyShooter_fly",
+      frames: [
+        { key: "shooting-enemy", frame: 0 },
+        { key: "shooting-enemy", frame: 1 },
+        { key: "shooting-enemy", frame: 2 }
+      ],
+      frameRate: 30,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: "enemyShooter_ghost",
+      frames: [
+        { key: "shooting-enemy", frame: 3 },
+        { key: "shooting-enemy", frame: 0 },
+        { key: "shooting-enemy", frame: 3 },
+        { key: "shooting-enemy", frame: 1 }
+      ],
+      frameRate: 20,
+      repeat: 1
+    });
+  }
+}
 export { StageOne };

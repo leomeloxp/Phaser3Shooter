@@ -15,9 +15,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
    * @param {number} [y=0] - The initial Y position for the new Enemy sprite
    * @memberof Enemy
    */
-  constructor(scene, x = 0, y = 0) {
+  constructor(scene, x = 0, y = 0, sprite = "enemy") {
     // Create Sprite.
-    super(scene, x, y, "enemy", 0);
+    super(scene, x, y, sprite, 0);
 
     // Add enemy to passed in scene as Sprite.
     scene.add.existing(this);
@@ -27,9 +27,6 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setVelocity(0, 25);
     this.health = GlobalSettings.enemyHealth;
     this.reward = GlobalSettings.enemyReward;
-
-    this.createAnimation();
-    this.anims.play("enemy_fly");
   }
 
   /**
@@ -38,35 +35,13 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
    */
   update() {
     // Destroy enemy if they leave the map.
-    if (this.y > this.scene.game.config.height + this.displayHeight) {
+    if (
+      this.y > this.scene.game.config.height + this.displayHeight || // If the plane leaves the canvas through the bottom of the screen
+      this.x < -this.displayWidth || // If the plane leaves the canvas through the left side of the screen
+      this.x > this.scene.game.config.width + this.displayWidth // If the leaves the canvas through the right side of the screen
+    ) {
       this.destroy();
     }
-  }
-
-  /**
-   * Creates the animations to be used by the enemy sprite.
-   * @memberof Enemy
-   */
-  createAnimation() {
-    // Regular fly animation
-    this.scene.anims.create({
-      key: "enemy_fly",
-      frames: [{ key: "enemy", frame: 0 }, { key: "enemy", frame: 1 }, { key: "enemy", frame: 2 }],
-      frameRate: 30,
-      repeat: -1
-    });
-
-    this.scene.anims.create({
-      key: "enemy_ghost",
-      frames: [
-        { key: "enemy", frame: 3 },
-        { key: "enemy", frame: 0 },
-        { key: "enemy", frame: 3 },
-        { key: "enemy", frame: 1 }
-      ],
-      frameRate: 20,
-      repeat: 1
-    });
   }
 
   handleCollision() {
@@ -79,5 +54,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       });
       explosion.anims.play("explode");
     }
+  }
+
+  playAnimation(name = "") {
+    this.anims.play(name);
   }
 }
