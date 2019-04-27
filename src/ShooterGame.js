@@ -31,25 +31,48 @@ class ShooterGame extends Phaser.Game {
     // Create a random data generator to be used across the game.
     this.rdg = new Phaser.Math.RandomDataGenerator();
     // Add first Scene and start it.
-    const stageOne = new StageOne("StageOne");
-    this.scene.add("StageOne", stageOne);
+    this.stageOne = new StageOne("StageOne");
+    this.scene.add("StageOne", this.stageOne);
     this.scene.start("StageOne");
 
     // Handle the completion of the first Scene.
-    stageOne.done
+    this.stageOne.done
       .then(() => {
         // TODO add actual StageTwo instead of reclycing StageOne.
-        this.scene.add("StageTwo", new StageOne("StageTwo"));
-        this.scene.switch("StageOne", "StageTwo");
+        this.showEndGameMessage("YOU WIN!");
       })
       .catch(() => {
-        // TODO add proper game over handling logic;
-        const text = stageOne.add.text(GlobalSettings.width / 2, GlobalSettings.height / 2, "Game Over!", {
-          align: "center",
-          fontSize: 32
-        });
-        text.setOrigin(0.5);
+        this.showEndGameMessage("Game Over!");
       });
+  }
+
+  showEndGameMessage(message = "Game Over!") {
+    const mainMessage = this.stageOne.add.text(GlobalSettings.width / 2, GlobalSettings.height / 2 - 30, message, {
+      align: "center",
+      fontSize: 32
+    });
+    mainMessage.setOrigin(0.5);
+    const finalScore = this.stageOne.add.text(
+      GlobalSettings.width / 2,
+      GlobalSettings.height / 2,
+      `Your final score was ${this.stageOne.player.score}.`,
+      {
+        align: "center",
+        fontSize: 16
+      }
+    );
+    finalScore.setOrigin(0.5);
+
+    const restartMessage = this.stageOne.add.text(
+      GlobalSettings.width / 2,
+      GlobalSettings.height / 2 + 20,
+      `Reload the page to play again.`,
+      {
+        align: "center",
+        fontSize: 16
+      }
+    );
+    restartMessage.setOrigin(0.5);
   }
 }
 
