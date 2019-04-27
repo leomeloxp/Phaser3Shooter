@@ -26,8 +26,10 @@ class StageOne extends Phaser.Scene {
   init() {
     // Add Enemies Group.
     this.enemies = this.add.group();
+    this.enemyBullets = this.add.group();
     this.enemyDelta = 0;
     this.enemyShooterDelta = 0;
+    this.playerBullets = this.add.group();
   }
   /**
    * Preloads any assets that will be used in this Scene.
@@ -90,6 +92,10 @@ class StageOne extends Phaser.Scene {
     this.physics.add.overlap(this.enemies, this.player.bullets, (enemy, bullet) => {
       this.handleEnemyAndPlayerBulletCollision(enemy, bullet);
     });
+
+    this.physics.add.overlap(this.player, this.enemyBullets, (player, bullet) => {
+      this.handlePlayerAndEnemieBulletsCollision(player, bullet);
+    });
     this.textLives = this.add.text(10, 10, `Lives: ${this.player.lives}`);
     this.textScore = this.add.text(100, 10, `Score: ${this.player.score}`);
   }
@@ -125,8 +131,8 @@ class StageOne extends Phaser.Scene {
       enemy.update(elapsedTime, deltaTime);
     });
 
+    this.cleanupBullets();
     this.checkForEndGame();
-
     // Add motion to bg tiles
     this.bg.tilePositionY -= 0.2;
   }
@@ -154,7 +160,7 @@ class StageOne extends Phaser.Scene {
   /**
    * Handles the logic for collisions between enemies and player bullets.
    * @param {Enemy} enemy
-   * @param {Phaser.Physics.Sprite} bullet
+   * @param {Phaser.Physics.Arcade.Image} bullet
    * @memberof StageOne
    */
   handleEnemyAndPlayerBulletCollision(enemy, bullet) {
@@ -184,12 +190,38 @@ class StageOne extends Phaser.Scene {
   }
 
   /**
+   * Handles the collision between any bullet fired by an enemy and the player's plane.
+   * @param {Player} player
+   * @param {Phaser.Physics.Arcade.Image} bullet
+   * @memberof StageOne
+   */
+  handlePlayerAndEnemieBulletsCollision(player, bullet) {
+    bullet.destroy();
+    // Run player collision handling
+    player.handleCollision();
+  }
+
+  /**
    * Updates the GUI so it reflects internal game state correctly.
    * @memberof StageOne
    */
   updateGUI() {
     this.textLives.text = `Lives: ${this.player.lives}`;
     this.textScore.text = `Score: ${this.player.score}`;
+  }
+
+  cleanupBullets() {
+    this.enemyBullets.getChildren().forEach(bullet => {
+      if (!Phaser.Geom.Rectangle.Overlaps(this.physics.world.bounds, bullet.getBounds())) {
+        bullet.destroy();
+      }
+    });
+
+    this.playerBullets.getChildren().forEach(bullet => {
+      if (!Phaser.Geom.Rectangle.Overlaps(this.physics.world.bounds, bullet.getBounds())) {
+        bullet.destroy();
+      }
+    });
   }
 
   /**

@@ -6,6 +6,7 @@ export const GlobalSettings = {
   enemyReward: 100, // points
   // Enemy Shooter
   enemyShooterSpawnDelay: 3000,
+  enemyShooterBulletDelay: 2000,
   // Player related
   playerShotDelay: 100, // ms
   playerInitialLives: 3, // lives

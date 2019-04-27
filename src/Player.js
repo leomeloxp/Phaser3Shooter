@@ -28,7 +28,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(true);
 
     // Create array that will hold bullets
-    this.bullets = this.scene.add.group({ maxSize: 100 });
+    this.bullets = this.scene.playerBullets;
     this.shotDeltaTime = 0;
     this.lives = GlobalSettings.playerInitialLives;
     this.score = 0;
