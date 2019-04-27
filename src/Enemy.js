@@ -35,11 +35,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
    */
   update() {
     // Destroy enemy if they leave the map.
-    if (
-      this.y > this.scene.game.config.height + this.displayHeight || // If the plane leaves the canvas through the bottom of the screen
-      this.x < -this.displayWidth || // If the plane leaves the canvas through the left side of the screen
-      this.x > this.scene.game.config.width + this.displayWidth // If the leaves the canvas through the right side of the screen
-    ) {
+    if (!Phaser.Geom.Rectangle.Overlaps(this.scene.physics.world.bounds, this.getBounds())) {
       this.destroy();
     }
   }
