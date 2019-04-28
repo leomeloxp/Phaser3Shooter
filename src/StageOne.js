@@ -30,6 +30,7 @@ class StageOne extends Phaser.Scene {
     this.enemyDelta = 0;
     this.enemyShooterDelta = 0;
     this.playerBullets = this.add.group();
+    this.powerUps = this.add.group({ maxSize: 3 });
   }
   /**
    * Preloads any assets that will be used in this Scene.
@@ -39,22 +40,22 @@ class StageOne extends Phaser.Scene {
     // Load Assets.
     this.load.crossOrigin = "anonymous";
     this.load.image("bullet", `${GlobalSettings.assetsUrl}/bullet.png`);
+    this.load.image("powerup1", `${GlobalSettings.assetsUrl}/powerup1.png`);
     this.load.image("sea", `${GlobalSettings.assetsUrl}/sea.png`);
-
-    this.load.spritesheet("player1", `${GlobalSettings.assetsUrl}/player1.png`, {
-      frameWidth: 64,
-      frameHeight: 64
-    });
 
     this.load.spritesheet("enemy", `${GlobalSettings.assetsUrl}/enemy.png`, {
       frameWidth: 32,
       frameHeight: 32
     });
-    this.load.spritesheet("shooting-enemy", `${GlobalSettings.assetsUrl}/shooting-enemy.png`, {
+    this.load.spritesheet("explosion", `${GlobalSettings.assetsUrl}/explosion.png`, {
       frameWidth: 32,
       frameHeight: 32
     });
-    this.load.spritesheet("explosion", `${GlobalSettings.assetsUrl}/explosion.png`, {
+    this.load.spritesheet("player1", `${GlobalSettings.assetsUrl}/player1.png`, {
+      frameWidth: 64,
+      frameHeight: 64
+    });
+    this.load.spritesheet("shooting-enemy", `${GlobalSettings.assetsUrl}/shooting-enemy.png`, {
       frameWidth: 32,
       frameHeight: 32
     });
@@ -96,6 +97,10 @@ class StageOne extends Phaser.Scene {
     this.physics.add.overlap(this.player, this.enemyBullets, (player, bullet) => {
       this.handlePlayerAndEnemieBulletsCollision(player, bullet);
     });
+
+    this.physics.add.overlap(this.player, this.powerUps, (player, powerUp) => {
+      this.handlePlayerAndPowerUpCollision(player, powerUp);
+    });
     this.textLives = this.add.text(10, 10, `Lives: ${this.player.lives}`);
     this.textScore = this.add.text(100, 10, `Score: ${this.player.score}`);
   }
@@ -131,7 +136,7 @@ class StageOne extends Phaser.Scene {
       enemy.update(elapsedTime, deltaTime);
     });
 
-    this.cleanupBullets();
+    this.cleanupArtifacts();
     this.checkForEndGame();
     // Add motion to bg tiles
     this.bg.tilePositionY -= 0.2;
@@ -158,6 +163,21 @@ class StageOne extends Phaser.Scene {
   }
 
   /**
+   * Handles the spawning of power up items. Relies on provided spawn coordinates and calculates
+   * the velocity and other properties of the power up sprite.
+   * @param {number} [x=0] X coordinate to spawn power up on
+   * @param {number} [y=0] Y coordinate to spawn power up on
+   * @memberof StageOne
+   */
+  spawnPowerUp(x = 0, y = 0) {
+    if (this.powerUps.getChildren().length < this.powerUps.maxSize && this.player.powerLevel < 5) {
+      const powerUp = this.physics.add.image(x, y, "powerup1");
+      this.powerUps.add(powerUp);
+      powerUp.setVelocity(0, 50);
+    }
+  }
+
+  /**
    * Handles the logic for collisions between enemies and player bullets.
    * @param {Enemy} enemy
    * @param {Phaser.Physics.Arcade.Image} bullet
@@ -168,6 +188,11 @@ class StageOne extends Phaser.Scene {
     enemy.handleCollision();
     if (!enemy.active) {
       this.player.addToScore(enemy.reward);
+      // Determines if the destroyed enemy dropped a power up.
+      const powerUpRoll = this.game.rdg.frac();
+      if (powerUpRoll < enemy.dropRate) {
+        this.spawnPowerUp(enemy.x, enemy.y);
+      }
     }
   }
 
@@ -202,6 +227,17 @@ class StageOne extends Phaser.Scene {
   }
 
   /**
+   * Handles the collision between any power up item and the player's plane.
+   * @param {*} player
+   * @param {*} powerUp
+   * @memberof StageOne
+   */
+  handlePlayerAndPowerUpCollision(player, powerUp) {
+    player.addPowerUp();
+    powerUp.destroy();
+  }
+
+  /**
    * Updates the GUI so it reflects internal game state correctly.
    * @memberof StageOne
    */
@@ -210,7 +246,11 @@ class StageOne extends Phaser.Scene {
     this.textScore.text = `Score: ${this.player.score}`;
   }
 
-  cleanupBullets() {
+  /**
+   * Cleanup any bullets or power up sprites that have left the screen to reduce memory usage.
+   * @memberof StageOne
+   */
+  cleanupArtifacts() {
     this.enemyBullets.getChildren().forEach(bullet => {
       if (!Phaser.Geom.Rectangle.Overlaps(this.physics.world.bounds, bullet.getBounds())) {
         bullet.destroy();
@@ -220,6 +260,12 @@ class StageOne extends Phaser.Scene {
     this.playerBullets.getChildren().forEach(bullet => {
       if (!Phaser.Geom.Rectangle.Overlaps(this.physics.world.bounds, bullet.getBounds())) {
         bullet.destroy();
+      }
+    });
+
+    this.powerUps.getChildren().forEach(powerUp => {
+      if (!Phaser.Geom.Rectangle.Overlaps(this.physics.world.bounds, powerUp.getBounds())) {
+        powerUp.destroy();
       }
     });
   }

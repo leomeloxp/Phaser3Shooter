@@ -32,6 +32,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.shotDeltaTime = 0;
     this.lives = GlobalSettings.playerInitialLives;
     this.score = 0;
+    this.powerLevel = 1;
 
     this.createAnimations();
     this.anims.play("fly");
@@ -90,6 +91,21 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const bullet = this.scene.physics.add.image(this.x, this.y, "bullet");
     bullet.setVelocity(0, -500);
     this.bullets.add(bullet);
+    // If player collected any power up, spawn extra bullets
+    if (this.powerLevel > 1) {
+      Array.from({ length: this.powerLevel }).forEach((_, i) => {
+        // Left hand side bullets
+        const bulletLeft = this.scene.physics.add.image(this.x, this.y, "bullet");
+        const theta = -90 - i * 10;
+        this.scene.physics.velocityFromAngle(theta, 500, bulletLeft.body.velocity);
+        this.bullets.add(bulletLeft);
+        // Right hand side bullets
+        const bulletRight = this.scene.physics.add.image(this.x, this.y, "bullet");
+        const ro = -90 + i * 10;
+        this.scene.physics.velocityFromAngle(ro, 500, bulletRight.body.velocity);
+        this.bullets.add(bulletRight);
+      });
+    }
   }
 
   /**
@@ -137,6 +153,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   handleCollision() {
     // Subtract 1 life from player current lives.
     this.lives -= 1;
+    // Reset power ups count.
+    this.powerLevel = 1;
     this.scene.updateGUI();
     // If player has run out of lives, trigger game over logic.
     if (this.lives < 1) {
@@ -166,5 +184,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   addToScore(points = 0) {
     this.score += points;
     this.scene.updateGUI();
+  }
+
+  /**
+   * Increments player power level. To be called when players pick up power ups.
+   * @memberof Player
+   */
+  addPowerUp() {
+    this.powerLevel += 1;
   }
 }
