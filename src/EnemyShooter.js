@@ -21,6 +21,7 @@ export class EnemyShooter extends Enemy {
     this.setRotation(rad);
     this.bulletDelta = 0;
     this.bullets = this.scene.enemyBullets;
+    this.dropRate = GlobalSettings.enemyShooterDropRate;
   }
 
   update(_, deltaTime) {

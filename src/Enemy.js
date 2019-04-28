@@ -27,6 +27,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setVelocity(0, 25);
     this.health = GlobalSettings.enemyHealth;
     this.reward = GlobalSettings.enemyReward;
+    this.dropRate = GlobalSettings.enemyDropRate;
   }
 
   /**
