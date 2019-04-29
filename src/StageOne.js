@@ -1,6 +1,7 @@
 // Import Phaser package
 import Phaser from "phaser";
 import { Enemy } from "./Enemy";
+import { EnemyBoss } from "./EnemyBoss";
 import { EnemyShooter } from "./EnemyShooter";
 import { GlobalSettings } from "./GlobalSettings";
 import { Player } from "./Player";
@@ -31,6 +32,8 @@ class StageOne extends Phaser.Scene {
     this.enemyShooterDelta = 0;
     this.playerBullets = this.add.group();
     this.powerUps = this.add.group({ maxSize: 3 });
+    this.bossDefeated = false;
+    this.boss = null;
   }
   /**
    * Preloads any assets that will be used in this Scene.
@@ -43,6 +46,10 @@ class StageOne extends Phaser.Scene {
     this.load.image("powerup1", `${GlobalSettings.assetsUrl}/powerup1.png`);
     this.load.image("sea", `${GlobalSettings.assetsUrl}/sea.png`);
 
+    this.load.spritesheet("boss", `${GlobalSettings.assetsUrl}/boss.png`, {
+      frameWidth: 93,
+      frameHeight: 75
+    });
     this.load.spritesheet("enemy", `${GlobalSettings.assetsUrl}/enemy.png`, {
       frameWidth: 32,
       frameHeight: 32
@@ -137,7 +144,7 @@ class StageOne extends Phaser.Scene {
     });
 
     this.cleanupArtifacts();
-    this.checkForEndGame();
+    this.checkStageStatus();
     // Add motion to bg tiles
     this.bg.tilePositionY -= 0.2;
   }
@@ -160,6 +167,12 @@ class StageOne extends Phaser.Scene {
     const enemy = new EnemyShooter(this, this.game.rdg.between(32, this.game.config.width - 32), 32);
     enemy.playAnimation("enemyShooter_fly");
     this.enemies.add(enemy);
+  }
+
+  spawnBoss() {
+    this.boss = new EnemyBoss(this, 0, -30);
+    this.boss.playAnimation("enemyBoss_ghost");
+    this.enemies.add(this.boss);
   }
 
   /**
@@ -274,8 +287,10 @@ class StageOne extends Phaser.Scene {
    * Checks whether this scene should be marked as completed.
    * @memberof StageOne
    */
-  checkForEndGame() {
-    if (this.player.score > 1000) {
+  checkStageStatus() {
+    if (this.player.score > 1000 && !(this.boss instanceof EnemyBoss)) {
+      this.spawnBoss();
+    } else if (this.bossDefeated) {
       this._resolveDone();
     } else if (!this.player.active) {
       this._rejectDone();
@@ -303,7 +318,7 @@ class StageOne extends Phaser.Scene {
       hideOnComplete: true
     });
 
-    // Regular enemy fly animation
+    // Regular enemy animations
     this.anims.create({
       key: "enemy_fly",
       frames: [{ key: "enemy", frame: 0 }, { key: "enemy", frame: 1 }, { key: "enemy", frame: 2 }],
@@ -322,7 +337,7 @@ class StageOne extends Phaser.Scene {
       frameRate: 20,
       repeat: 1
     });
-    // Regular enemy fly animation
+    // Shooter enemy animations
     this.anims.create({
       key: "enemyShooter_fly",
       frames: [
@@ -344,6 +359,26 @@ class StageOne extends Phaser.Scene {
       ],
       frameRate: 20,
       repeat: 1
+    });
+
+    // Boss animations
+    this.anims.create({
+      key: "enemyBoss_fly",
+      frames: [{ key: "boss", frame: 0 }, { key: "boss", frame: 1 }, { key: "boss", frame: 2 }],
+      frameRate: 30,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: "enemyBoss_ghost",
+      frames: [
+        { key: "boss", frame: 3 },
+        { key: "boss", frame: 0 },
+        { key: "boss", frame: 3 },
+        { key: "boss", frame: 1 }
+      ],
+      frameRate: 20,
+      repeat: -1
     });
   }
 }
