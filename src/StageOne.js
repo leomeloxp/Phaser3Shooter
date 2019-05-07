@@ -77,8 +77,13 @@ class StageOne extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, GlobalSettings.width, GlobalSettings.height);
 
     // Add Background
-    this.bg = this.add.tileSprite(0, 0, 1200, 800, "sea");
-
+    this.bg = this.add.tileSprite(
+      GlobalSettings.width / 2,
+      GlobalSettings.height / 2,
+      GlobalSettings.width,
+      GlobalSettings.height,
+      "sea"
+    );
     // Add Player
     this.player = new Player(this);
 

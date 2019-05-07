@@ -19,6 +19,6 @@ export const GlobalSettings = {
   playerShotDelay: 100, // ms
   playerInitialLives: 3, // lives
   // Game level settings
-  height: 400, // px
-  width: 600 // px
+  height: window.innerHeight * 0.8, // px
+  width: window.innerWidth * 0.8 // px
 };
