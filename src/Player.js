@@ -88,6 +88,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
    * @memberof Player
    */
   fireBullet() {
+    if (!this.active) {
+      return;
+    }
     const bullet = this.scene.physics.add.image(this.x, this.y, "bullet");
     bullet.setVelocity(0, -500);
     this.bullets.add(bullet);
@@ -182,8 +185,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
    * @memberof Player
    */
   addToScore(points = 0) {
-    this.score += points;
-    this.scene.updateGUI();
+    if (this.active) {
+      this.score += points;
+      this.scene.updateGUI();
+    }
   }
 
   /**
