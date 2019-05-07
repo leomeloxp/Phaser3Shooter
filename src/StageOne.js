@@ -139,7 +139,11 @@ class StageOne extends Phaser.Scene {
     }
 
     // Spawn shooter enemy
-    if (elapsedTime > 3 && this.enemyShooterDelta > GlobalSettings.enemyShooterSpawnDelay) {
+    if (
+      elapsedTime > 3 &&
+      this.enemyShooterDelta > GlobalSettings.enemyShooterSpawnDelay &&
+      !(this.boss instanceof EnemyBoss)
+    ) {
       this.enemyShooterDelta = 0;
       this.spawnEnemyShooter();
     }
@@ -176,7 +180,6 @@ class StageOne extends Phaser.Scene {
 
   spawnBoss() {
     this.boss = new EnemyBoss(this, 0, -30);
-    this.boss.playAnimation("enemyBoss_ghost");
     this.enemies.add(this.boss);
   }
 
@@ -295,7 +298,7 @@ class StageOne extends Phaser.Scene {
   checkStageStatus() {
     if (this.player.score > 1000 && !(this.boss instanceof EnemyBoss)) {
       this.spawnBoss();
-    } else if (this.bossDefeated) {
+    } else if (this.boss instanceof EnemyBoss && this.boss.health < 1) {
       this._resolveDone();
     } else if (!this.player.active) {
       this._rejectDone();

@@ -12,6 +12,7 @@ export const GlobalSettings = {
   enemyShooterReward: 500,
   enemyShooterSpawnDelay: 3000,
   // Enemy Boss
+  enemyBossBulletDelay: 2000,
   enemyBossDropRate: 0,
   enemyBossHealth: 500,
   enemyBossReward: 5000,
