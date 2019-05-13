@@ -92,6 +92,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       return;
     }
     const bullet = this.scene.physics.add.image(this.x, this.y, "bullet");
+    this.scene.sound.add("player-fire").play();
     bullet.setVelocity(0, -500);
     this.bullets.add(bullet);
     // If player collected any power up, spawn extra bullets
@@ -158,6 +159,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.lives -= 1;
     // Reset power ups count.
     this.powerLevel = 1;
+    this.scene.sound.add("player-explosion").play();
     this.scene.updateGUI();
     // If player has run out of lives, trigger game over logic.
     if (this.lives < 1) {

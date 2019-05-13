@@ -59,6 +59,7 @@ export class EnemyBoss extends Enemy {
     this.health -= 1;
     if (this.health < 1) {
       const explosion = this.scene.add.sprite(this.x, this.y, "explosion", 0);
+      this.scene.sound.add("explosion").play();
       this.destroy();
       explosion.on(`${Phaser.Animations.Events.SPRITE_ANIMATION_KEY_COMPLETE}explode`, () => {
         explosion.destroy();
@@ -76,6 +77,7 @@ export class EnemyBoss extends Enemy {
     if (this.health >= GlobalSettings.enemyBossHealth / 2) {
       // Create centre bullet
       let bullet = this.scene.physics.add.image(this.x, this.y + 32, "bullet");
+      this.scene.sound.add("enemy-fire").play();
       this.scene.physics.moveTo(bullet, this.scene.player.x, this.scene.player.y, 100);
       this.bullets.add(bullet);
       Array.from({ length: 3 }).forEach((_, i) => {

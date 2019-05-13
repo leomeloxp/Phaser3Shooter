@@ -42,6 +42,7 @@ export class EnemyShooter extends Enemy {
   fireBullet() {
     // Create bullet object
     let bullet = this.scene.physics.add.image(this.x, this.y, "bullet");
+    this.scene.sound.add("enemy-fire").play();
     // Make it so the bullet moves towards the player current position at a speed of 50 on both axis;
     this.scene.physics.moveTo(bullet, this.scene.player.x, this.scene.player.y, 50);
     // Add the bullet to the enemyBullets group so we can do collision checking with it.

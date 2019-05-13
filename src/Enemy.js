@@ -45,6 +45,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.health -= 1;
     if (this.health < 1) {
       const explosion = this.scene.add.sprite(this.x, this.y, "explosion", 0);
+      this.scene.sound.add("explosion").play();
       this.destroy();
       explosion.on(`${Phaser.Animations.Events.SPRITE_ANIMATION_KEY_COMPLETE}explode`, () => {
         explosion.destroy();

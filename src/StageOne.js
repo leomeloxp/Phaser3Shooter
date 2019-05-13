@@ -66,6 +66,24 @@ class StageOne extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 32
     });
+
+    this.load.audio("powerup", [`${GlobalSettings.assetsUrl}/powerup.ogg`, `${GlobalSettings.assetsUrl}/powerup.wav`]);
+    this.load.audio("player-fire", [
+      `${GlobalSettings.assetsUrl}/player-fire.ogg`,
+      `${GlobalSettings.assetsUrl}/player-fire.wav`
+    ]);
+    this.load.audio("player-explosion", [
+      `${GlobalSettings.assetsUrl}/player-explosion.ogg`,
+      `${GlobalSettings.assetsUrl}/player-explosion.wav`
+    ]);
+    this.load.audio("explosion", [
+      `${GlobalSettings.assetsUrl}/explosion.ogg`,
+      `${GlobalSettings.assetsUrl}/explosion.wav`
+    ]);
+    this.load.audio("enemy-fire", [
+      `${GlobalSettings.assetsUrl}/enemy-fire.ogg`,
+      `${GlobalSettings.assetsUrl}/enemy-fire.wav`
+    ]);
   }
 
   /**
@@ -255,6 +273,7 @@ class StageOne extends Phaser.Scene {
    */
   handlePlayerAndPowerUpCollision(player, powerUp) {
     player.addPowerUp();
+    this.sound.add("powerup").play();
     powerUp.destroy();
   }
 
